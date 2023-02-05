@@ -92,7 +92,7 @@ void write_data(int freq_count, int *freq_vector, float duration, uint64_t frequ
         tmp_word = 0;
         for (int j = 0; j < freq_count; j++)
         {
-            tmp_word += (18000 / freq_count * cos(freq_vector[j] * 2 * M_PI * i / frequence));
+            tmp_word += (18000 / freq_count * cosf(freq_vector[j] * 2 * M_PI * i / frequence));
         }
         fwrite(&tmp_word, 1, 2, io);
     }
