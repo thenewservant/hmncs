@@ -158,7 +158,6 @@ void check_args(int argc, char *argv[], int *option_pos)
 
             option_pos[3] = i;
         }
-
         else
         {
             usage();
