@@ -17,11 +17,11 @@ const char w[] = "RIFF\0WAVEfmt \0";
 
 FILE *io;
 
-uint64_t max_freq(int freq_count, int freq_vector[]);
-void write_header(int freq_count, int *freq_vector, float duration, uint64_t frequence);
+uint64_t max_freq(int freq_count, double freq_vector[]);
+void write_header(int freq_count, double *freq_vector, float duration, int frequence);
 void usage();
 void check_args(int argc, char *argv[], int *option_pos);
-void write_data(int freq_count, int *freq_vector, float duration, uint64_t frequence);
+void write_data(int freq_count, double *freq_vector, float duration, int frequence);
 
 int main(int argc, char *argv[])
 {
@@ -41,22 +41,21 @@ int main(int argc, char *argv[])
     }
 
     uint16_t freq_count = pos_vector[3] - pos_vector[2];
-    int32_t freqv[freq_count];
+    double freqv[freq_count];
 
     float duration = atof(argv[pos_vector[0]]) ? atof(argv[pos_vector[0]]) : default_duration;
 
     for (int i = pos_vector[2]; i < pos_vector[3]; i++)
     {
-        printf("%d ", atoi(argv[i]));
-        freqv[i - pos_vector[2]] = atoi(argv[i]);
+        freqv[i - pos_vector[2]] = atof(argv[i]);
     }
 
-    uint64_t frequence = max_freq(freq_count, freqv) * 10; // ~~ * n > 2 at least in order to comply with shannon criteria. Using a greater integer improves overall sound quality.
+    int frequence = max_freq(freq_count, freqv) * 10; // ~~ * n > 2 at least in order to comply with shannon criteria. Using a greater integer improves overall sound quality.
     write_header(freq_count, freqv, duration, frequence);
     write_data(freq_count, freqv, duration, frequence);
 }
 
-void write_header(int freq_count, int *freq_vector, float duration, uint64_t frequence)
+void write_header(int freq_count, double *freq_vector, float duration, int frequence)
 {
 
     uint16_t nbr_canaux = 1; // mono = 1, stereo = 2, gauche droit centre = 3
@@ -82,7 +81,7 @@ void write_header(int freq_count, int *freq_vector, float duration, uint64_t fre
     fwrite(&data_size, 1, 4, io);
 }
 
-void write_data(int freq_count, int *freq_vector, float duration, uint64_t frequence)
+void write_data(int freq_count, double *freq_vector, float duration, int frequence)
 {
 
     int16_t tmp_word; // temporary word to be written onto the file
@@ -165,9 +164,9 @@ void check_args(int argc, char *argv[], int *option_pos)
     }
 }
 
-uint64_t max_freq(int freq_count, int freq_vector[])
+uint64_t max_freq(int freq_count, double *freq_vector)
 {
-    uint64_t max = freq_vector[0];
+    double max = freq_vector[0];
     for (int c = 1; c < freq_count; c++)
     {
         max = max > freq_vector[c] ? max : freq_vector[c];
